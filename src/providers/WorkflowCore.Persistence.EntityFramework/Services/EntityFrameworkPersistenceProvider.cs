@@ -8,6 +8,7 @@ using WorkflowCore.Persistence.EntityFramework.Models;
 using WorkflowCore.Models;
 using WorkflowCore.Persistence.EntityFramework.Interfaces;
 using System.Threading;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace WorkflowCore.Persistence.EntityFramework.Services
 {
@@ -17,13 +18,16 @@ namespace WorkflowCore.Persistence.EntityFramework.Services
         private readonly bool _canMigrateDB;
         private readonly IWorkflowDbContextFactory _contextFactory;
 
+        public string[] _workflowDefinitions { get; set; }
+
         public bool SupportsScheduledCommands => true;
 
-        public EntityFrameworkPersistenceProvider(IWorkflowDbContextFactory contextFactory, bool canCreateDB, bool canMigrateDB)
+        public EntityFrameworkPersistenceProvider(IWorkflowDbContextFactory contextFactory, bool canCreateDB, bool canMigrateDB, string[] workflowDefinitions)
         {
             _contextFactory = contextFactory;
             _canCreateDB = canCreateDB;
             _canMigrateDB = canMigrateDB;
+            _workflowDefinitions = workflowDefinitions;
         }
 
         public async Task<string> CreateEventSubscription(EventSubscription subscription, CancellationToken cancellationToken = default)
@@ -50,12 +54,13 @@ namespace WorkflowCore.Persistence.EntityFramework.Services
             }
         }
 
-        public async Task<IEnumerable<string>> GetRunnableInstances(DateTime asAt, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<string>> GetRunnableInstances(DateTime asAt, CancellationToken cancellationToken = default, string[] filterDefinitionIds = default)
         {
             using (var db = ConstructDbContext())
             {
                 var now = asAt.ToUniversalTime().Ticks;
                 var raw = await db.Set<PersistedWorkflow>()
+                    .Where(x=> filterDefinitionIds == default || filterDefinitionIds.Contains(x.WorkflowDefinitionId))
                     .Where(x => x.NextExecution.HasValue && (x.NextExecution <= now) && (x.Status == WorkflowStatus.Runnable))
                     .Select(x => x.InstanceId)
                     .ToListAsync(cancellationToken);
@@ -415,18 +420,36 @@ namespace WorkflowCore.Persistence.EntityFramework.Services
         {
             using (var db = ConstructDbContext())
             {
-                var cursor = db.Set<PersistedScheduledCommand>()
-                    .Where(x => x.ExecuteTime < asOf.UtcDateTime.Ticks)
-                    .AsAsyncEnumerable();
+                IQueryable<PersistedScheduledCommand> query;
 
-                await foreach (var command in cursor)
-                {
+                if (_workflowDefinitions?.Any() ?? false) {
+
+                    query = from psc in db.Set<PersistedScheduledCommand>().Where(x => x.ExecuteTime < asOf.UtcDateTime.Ticks)
+                            join wf in db.Set<PersistedWorkflow>().Where(x => _workflowDefinitions.Contains(x.WorkflowDefinitionId))
+                            on psc.Data equals wf.InstanceId.ToString()
+                            select psc;
+
+                } else {
+                     query = db.Set<PersistedScheduledCommand>().Where(x => x.ExecuteTime < asOf.UtcDateTime.Ticks);
+                }
+                   var cursor = await query.ToArrayAsync();
+                   // .AsAsyncEnumerable();
+
+                //await foreach (var command in cursor)
+                 foreach (var command in cursor)
+                 {
                     try
-                    {
+                    {                        
+
+                        //поставить в очередь action: await _queueProvider.QueueWork(command.Data, QueueType.Workflow);
                         await action(command.ToScheduledCommand());
+
                         using var db2 = ConstructDbContext();
                         db2.Set<PersistedScheduledCommand>().Remove(command);
                         await db2.SaveChangesAsync();
+
+                        
+                        
                     }
                     catch (Exception)
                     {
@@ -434,6 +457,15 @@ namespace WorkflowCore.Persistence.EntityFramework.Services
                     }
                 }
             }
+        }
+
+        public async Task<bool> MeetWorkflowDefinitions(WorkflowDbContext dbContext, PersistedScheduledCommand command) {
+            if (command.CommandName != ScheduledCommand.ProcessWorkflow) throw new Exception("Неизвестный тип");
+
+           bool result =await dbContext.Set<PersistedWorkflow>()
+                .AnyAsync(x=>x.InstanceId.ToString() == command.Data && (_workflowDefinitions==default || _workflowDefinitions.Contains(x.WorkflowDefinitionId)) );
+
+            return result;
         }
     }
 }

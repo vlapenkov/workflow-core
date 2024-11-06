@@ -65,7 +65,7 @@ namespace WorkflowCore.Services
             }
         }
 
-        public async Task<IEnumerable<string>> GetRunnableInstances(DateTime asAt, CancellationToken _ = default)
+        public async Task<IEnumerable<string>> GetRunnableInstances(DateTime asAt, CancellationToken _ = default, string[] filterDefinitions = default)
         {
             lock (_instances)
             {

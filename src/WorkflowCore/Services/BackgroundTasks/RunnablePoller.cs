@@ -68,7 +68,7 @@ namespace WorkflowCore.Services.BackgroundTasks
                     {
                         _logger.LogDebug("Polling for runnable workflows");
 
-                        var runnables = await _persistenceStore.GetRunnableInstances(_dateTimeProvider.Now);
+                        var runnables = await _persistenceStore.GetRunnableInstances(_dateTimeProvider.Now,CancellationToken.None, _options.WorkflowDefinitions);
                         foreach (var item in runnables)
                         {
                             if (_persistenceStore.SupportsScheduledCommands)

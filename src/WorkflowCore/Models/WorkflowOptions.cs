@@ -40,6 +40,11 @@ namespace WorkflowCore.Models
         public bool EnablePolling { get; set; } = true;
         public bool EnableLifeCycleEventsPublisher { get; set; } = true;
 
+        /// <summary>
+        /// Ключ для подключения только определений такого типа
+        /// </summary>
+        public string[] WorkflowDefinitions { get; set; } = null;
+
         public void UsePersistence(Func<IServiceProvider, IPersistenceProvider> factory)
         {
             PersistenceFactory = factory;

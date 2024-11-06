@@ -32,7 +32,7 @@ namespace WorkflowCore.Services
 
         public Task<IEnumerable<string>> GetRunnableEvents(DateTime asAt, CancellationToken _ = default) => _innerService.GetRunnableEvents(asAt);
 
-        public Task<IEnumerable<string>> GetRunnableInstances(DateTime asAt, CancellationToken _ = default) => _innerService.GetRunnableInstances(asAt);
+        public Task<IEnumerable<string>> GetRunnableInstances(DateTime asAt, CancellationToken _ = default, string[] filterDefinitions = default) => _innerService.GetRunnableInstances(asAt);
 
         public Task<IEnumerable<EventSubscription>> GetSubscriptions(string eventName, string eventKey, DateTime asOf, CancellationToken _ = default) => _innerService.GetSubscriptions(eventName, eventKey, asOf);
 

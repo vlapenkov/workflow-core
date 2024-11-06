@@ -12,7 +12,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static WorkflowOptions UsePostgreSQL(this WorkflowOptions options,
             string connectionString, bool canCreateDB, bool canMigrateDB, string schemaName="wfc")
         {
-            options.UsePersistence(sp => new EntityFrameworkPersistenceProvider(new PostgresContextFactory(connectionString, schemaName), canCreateDB, canMigrateDB));
+            options.UsePersistence(sp => new EntityFrameworkPersistenceProvider(new PostgresContextFactory(connectionString, schemaName), canCreateDB, canMigrateDB, options.WorkflowDefinitions));
             options.Services.AddTransient<IWorkflowPurger>(sp => new WorkflowPurger(new PostgresContextFactory(connectionString, schemaName)));
             return options;
         }
