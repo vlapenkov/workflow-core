@@ -27,7 +27,7 @@ namespace WorkflowCore.Services
             return result;
         }
 
-        public virtual WorkflowDefinition Build(string id, int version)
+        public virtual WorkflowDefinition Build(string id, int version, string description =null)
         {
             AttachExternalIds();
             return new WorkflowDefinition
@@ -36,7 +36,8 @@ namespace WorkflowCore.Services
                 Version = version,
                 Steps = new WorkflowStepCollection(Steps),
                 DefaultErrorBehavior = DefaultErrorBehavior,
-                DefaultErrorRetryInterval = DefaultErrorRetryInterval
+                DefaultErrorRetryInterval = DefaultErrorRetryInterval,
+                Description = description
             };
         }
 
@@ -125,9 +126,9 @@ namespace WorkflowCore.Services
     public class WorkflowBuilder<TData> : WorkflowBuilder, IWorkflowBuilder<TData>
     {
 
-        public override WorkflowDefinition Build(string id, int version)
+        public override WorkflowDefinition Build(string id, int version, string description = null)
         {
-            var result = base.Build(id, version);
+            var result = base.Build(id, version, description);
             result.DataType = typeof(TData);
             return result;
         }

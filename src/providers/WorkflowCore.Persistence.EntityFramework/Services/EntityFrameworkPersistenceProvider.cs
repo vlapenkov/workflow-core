@@ -434,7 +434,7 @@ namespace WorkflowCore.Persistence.EntityFramework.Services
                 }
                    var cursor = await query.ToArrayAsync();
                    // .AsAsyncEnumerable();
-
+                           
                 //await foreach (var command in cursor)
                  foreach (var command in cursor)
                  {

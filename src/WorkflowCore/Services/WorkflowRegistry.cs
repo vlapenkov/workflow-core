@@ -58,7 +58,7 @@ namespace WorkflowCore.Services
         {
             var builder = _serviceProvider.GetService<IWorkflowBuilder>().UseData<object>();
             workflow.Build(builder);
-            var def = builder.Build(workflow.Id, workflow.Version);
+            var def = builder.Build(workflow.Id, workflow.Version, workflow.Description);
             RegisterWorkflow(def);
         }
 
