@@ -91,6 +91,7 @@ namespace WorkflowCore.Persistence.PostgreSQL.Migrations
                     StartTime = table.Column<DateTime>(nullable: true),
                     StepId = table.Column<int>(nullable: false),
                     StepName = table.Column<string>(nullable: true),
+                    Analitics = table.Column<string>(nullable: true),
                     WorkflowId = table.Column<long>(nullable: false)
                 },
                 constraints: table =>

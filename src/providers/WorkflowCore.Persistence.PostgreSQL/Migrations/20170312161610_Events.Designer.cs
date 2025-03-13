@@ -117,6 +117,8 @@ namespace WorkflowCore.Persistence.PostgreSQL.Migrations
 
                     b.Property<string>("StepName");
 
+                    b.Property<string>("Analitics");
+
                     b.Property<long>("WorkflowId");
 
                     b.HasKey("PersistenceId");

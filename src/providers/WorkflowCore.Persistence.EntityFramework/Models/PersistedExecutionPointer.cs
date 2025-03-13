@@ -44,7 +44,10 @@ namespace WorkflowCore.Persistence.EntityFramework.Models
 
         [MaxLength(100)]
         public string StepName { get; set; }
-                
+
+        [MaxLength(256)]
+        public string Analitics{ get; set; }
+
         public List<PersistedExtensionAttribute> ExtensionAttributes { get; set; } = new List<PersistedExtensionAttribute>();
 
         public int RetryCount { get; set; }

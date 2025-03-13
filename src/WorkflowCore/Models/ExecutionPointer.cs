@@ -34,6 +34,11 @@ namespace WorkflowCore.Models
 
         public string StepName { get; set; }
 
+        /// <summary>
+        /// Новый атрибут
+        /// </summary>
+        public string Analitics { get; set; }
+
         public int RetryCount { get; set; }
 
         public List<string> Children { get; set; } = new List<string>();

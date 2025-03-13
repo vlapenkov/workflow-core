@@ -155,6 +155,10 @@ namespace WorkflowCore.Persistence.PostgreSQL.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<string>("Analitics")
+                     .HasColumnType("character varying(256)")
+                     .HasMaxLength(256);
+
                     b.Property<long>("WorkflowId")
                         .HasColumnType("bigint");
 

@@ -16,7 +16,8 @@ namespace WorkflowCore.Services
                 StepId = 0,
                 Active = true,
                 Status = PointerStatus.Pending,
-                StepName = def.Steps.FindById(0).Name
+                StepName = def.Steps.FindById(0).Name,
+                Analitics = def.Steps.FindById(0).Analitics
             };
         }
 
@@ -32,6 +33,7 @@ namespace WorkflowCore.Services
                 ContextItem = pointer.ContextItem,
                 Status = PointerStatus.Pending,
                 StepName = def.Steps.FindById(outcomeTarget.NextStep).Name,
+                Analitics = def.Steps.FindById(outcomeTarget.NextStep).Analitics,
                 Scope = new List<string>(pointer.Scope)
             };            
         }
@@ -68,6 +70,7 @@ namespace WorkflowCore.Services
                 ContextItem = pointer.ContextItem,
                 Status = PointerStatus.Pending,
                 StepName = def.Steps.FindById(compensationStepId).Name,
+                Analitics = def.Steps.FindById(compensationStepId).Analitics,
                 Scope = new List<string>(pointer.Scope)
             };
         }

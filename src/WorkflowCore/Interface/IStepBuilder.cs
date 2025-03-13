@@ -19,6 +19,8 @@ namespace WorkflowCore.Interface
         /// <returns></returns>
         IStepBuilder<TData, TStepBody> Name(string name);
 
+        IStepBuilder<TData, TStepBody> Analitics(string analitics);
+
         /// <summary>
         /// Specifies a custom Id to reference this step
         /// </summary>

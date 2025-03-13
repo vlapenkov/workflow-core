@@ -26,6 +26,12 @@ namespace WorkflowCore.Services
             return this;
         }
 
+        public IStepBuilder<TData, TStepBody> Analitics(string analitics)
+        {
+            Step.Analitics = analitics;
+            return this;
+        }
+
         public IStepBuilder<TData, TStepBody> Id(string id)
         {
             Step.ExternalId = id;

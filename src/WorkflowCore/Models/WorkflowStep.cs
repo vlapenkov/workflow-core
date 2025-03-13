@@ -13,6 +13,11 @@ namespace WorkflowCore.Models
 
         public virtual string Name { get; set; }
 
+        /// <summary>
+        /// Добавил признак руками
+        /// </summary>
+        public virtual string Analitics { get; set; }
+
         public virtual string ExternalId { get; set; }
 
         public virtual List<int> Children { get; set; } = new List<int>();

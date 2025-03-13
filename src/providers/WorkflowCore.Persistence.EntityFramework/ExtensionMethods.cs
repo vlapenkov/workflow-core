@@ -49,6 +49,7 @@ namespace WorkflowCore.Persistence.EntityFramework
                 persistedEP.StartTime = ep.StartTime;
                 persistedEP.EndTime = ep.EndTime;
                 persistedEP.StepName = ep.StepName;
+                persistedEP.Analitics = ep.Analitics;
                 persistedEP.RetryCount = ep.RetryCount;
                 persistedEP.PredecessorId = ep.PredecessorId;
                 persistedEP.ContextItem = JsonConvert.SerializeObject(ep.ContextItem, SerializerSettings);
@@ -174,6 +175,9 @@ namespace WorkflowCore.Persistence.EntityFramework
                     pointer.EndTime = DateTime.SpecifyKind(ep.EndTime.Value, DateTimeKind.Utc);
 
                 pointer.StepName = ep.StepName;
+                pointer.Analitics = ep.Analitics;
+
+
 
                 pointer.RetryCount = ep.RetryCount;
                 pointer.PredecessorId = ep.PredecessorId;

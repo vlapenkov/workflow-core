@@ -43,6 +43,15 @@ namespace WorkflowCore.Persistence.PostgreSQL.Migrations
                 oldNullable: true);
 
             migrationBuilder.AlterColumn<string>(
+                name: "Analitics",
+                schema: "wfc",
+                table: "ExecutionPointer",
+                maxLength: 100,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
                 name: "EventName",
                 schema: "wfc",
                 table: "ExecutionPointer",
@@ -131,6 +140,16 @@ namespace WorkflowCore.Persistence.PostgreSQL.Migrations
                 oldClrType: typeof(string),
                 oldMaxLength: 100,
                 oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Analitics",
+                schema: "wfc",
+                table: "ExecutionPointer",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldMaxLength: 256,
+                oldNullable: true);
+
 
             migrationBuilder.AlterColumn<string>(
                 name: "EventName",
