@@ -60,6 +60,10 @@ namespace WorkflowCore.Services
             workflow.Build(builder);
             var def = builder.Build(workflow.Id, workflow.Version, workflow.Description);
             RegisterWorkflow(def);
+
+            var repository = _serviceProvider.GetService<IWorkflowRepository>();
+
+            repository.PersistDefinition(def);
         }
 
         public void RegisterWorkflow(WorkflowDefinition definition)
@@ -90,6 +94,11 @@ namespace WorkflowCore.Services
             workflow.Build(builder);
             var def = builder.Build(workflow.Id, workflow.Version);
             RegisterWorkflow(def);
+
+            var repository =_serviceProvider.GetService<IWorkflowRepository>();
+
+            repository.PersistDefinition(def);
+
         }
 
         public bool IsRegistered(string workflowId, int version)

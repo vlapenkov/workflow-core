@@ -78,5 +78,10 @@ namespace WorkflowCore.Services
         {
             throw new NotImplementedException();
         }
+
+        public Task PersistDefinition(WorkflowDefinition definition, CancellationToken cancellationToken = default)
+        {
+            return _innerService.PersistDefinition(definition, cancellationToken);
+        }
     }
 }

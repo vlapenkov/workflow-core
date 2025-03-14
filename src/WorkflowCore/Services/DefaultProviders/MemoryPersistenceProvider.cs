@@ -24,6 +24,8 @@ namespace WorkflowCore.Services
         private readonly List<Event> _events = new List<Event>();
         private readonly List<ExecutionError> _errors = new List<ExecutionError>();
 
+        private readonly List<WorkflowDefinition> _definitions = new List<WorkflowDefinition>();
+
         public bool SupportsScheduledCommands => false;
 
         public async Task<string> CreateNewWorkflow(WorkflowInstance workflow, CancellationToken _ = default)
@@ -285,6 +287,18 @@ namespace WorkflowCore.Services
         public Task ProcessCommands(DateTimeOffset asOf, Func<ScheduledCommand, Task> action, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
+        }
+
+        public Task PersistDefinition(WorkflowDefinition definition, CancellationToken cancellationToken = default)
+        {
+            lock (_definitions)
+            {
+                var existing = _definitions.First(x => x.Id == definition.Id);
+                _definitions.Remove(existing);
+                _definitions.Add(definition);
+            }
+
+            return Task.CompletedTask;
         }
     }
 

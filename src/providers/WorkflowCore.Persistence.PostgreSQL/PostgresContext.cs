@@ -66,6 +66,12 @@ namespace WorkflowCore.Persistence.PostgreSQL
             builder.ToTable("ScheduledCommand", _schemaName);
             builder.Property(x => x.PersistenceId).ValueGeneratedOnAdd();
         }
+
+        protected override void ConfigureWorkflowDefinitions(EntityTypeBuilder<PersistedDefinition> builder)
+        {
+            builder.ToTable("Definition", _schemaName);
+            builder.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
     }
 }
 

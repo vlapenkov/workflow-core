@@ -138,6 +138,23 @@ namespace WorkflowCore.Persistence.EntityFramework
             return result;
         }
 
+        internal static PersistedDefinition ToPersistable(this WorkflowDefinition definition)
+        {
+            var result = new PersistedDefinition();
+            result.WorkflowDefinitionId = definition.Id;
+            result.Version = definition.Version;
+            result.Description = definition.Description;
+            result.StepsData =  definition.Steps.Select(p => new StepData
+            {
+                Id = p.Id,
+                Name = p.Name,
+                DimensionId = p.Analitics
+            }).ToList();
+           
+
+            return result;
+        }
+
         internal static WorkflowInstance ToWorkflowInstance(this PersistedWorkflow instance)
         {
             WorkflowInstance result = new WorkflowInstance();

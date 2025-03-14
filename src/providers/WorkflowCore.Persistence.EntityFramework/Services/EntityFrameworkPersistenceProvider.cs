@@ -60,7 +60,7 @@ namespace WorkflowCore.Persistence.EntityFramework.Services
             {
                 var now = asAt.ToUniversalTime().Ticks;
                 var raw = await db.Set<PersistedWorkflow>()
-                    .Where(x=> filterDefinitionIds == default || filterDefinitionIds.Contains(x.WorkflowDefinitionId))
+                    .Where(x => filterDefinitionIds == default || filterDefinitionIds.Contains(x.WorkflowDefinitionId))
                     .Where(x => x.NextExecution.HasValue && (x.NextExecution <= now) && (x.Status == WorkflowStatus.Runnable))
                     .Select(x => x.InstanceId)
                     .ToListAsync(cancellationToken);
@@ -156,8 +156,38 @@ namespace WorkflowCore.Persistence.EntityFramework.Services
                 await db.SaveChangesAsync(cancellationToken);
             }
         }
-		
-		public async Task PersistWorkflow(WorkflowInstance workflow, List<EventSubscription> subscriptions, CancellationToken cancellationToken = default)
+
+        public async Task PersistDefinition(WorkflowDefinition definition, CancellationToken cancellationToken = default)
+        {
+            using (var db = ConstructDbContext())
+            {
+                try
+                {
+                    var existingDefinition = await db.Set<PersistedDefinition>()
+                        .Where(x => x.WorkflowDefinitionId == definition.Id && x.Version == definition.Version)
+                        .AsTracking()
+                        .FirstOrDefaultAsync(cancellationToken);
+
+                    if (existingDefinition == null)
+                        db.Set<PersistedDefinition>().Add(definition.ToPersistable());
+                    else
+                    {
+                        var persistableDefinition = definition.ToPersistable();
+                        existingDefinition.Description = persistableDefinition.Description;
+                        existingDefinition.StepsData = definition.ToPersistable().StepsData;
+                    }
+
+                    await db.SaveChangesAsync(cancellationToken);
+
+                }
+                catch (Exception ex)
+                {
+                    //TODO: Здесь логировать ошибку
+                }
+            }
+        }
+
+        public async Task PersistWorkflow(WorkflowInstance workflow, List<EventSubscription> subscriptions, CancellationToken cancellationToken = default)
         {
             using (var db = ConstructDbContext())
             {
@@ -388,7 +418,7 @@ namespace WorkflowCore.Persistence.EntityFramework.Services
                     .Where(x => x.SubscriptionId == uid)
                     .AsTracking()
                     .FirstAsync(cancellationToken);
-                
+
                 if (existingEntity.ExternalToken != token)
                     throw new InvalidOperationException();
 
@@ -422,24 +452,27 @@ namespace WorkflowCore.Persistence.EntityFramework.Services
             {
                 IQueryable<PersistedScheduledCommand> query;
 
-                if (_workflowDefinitions?.Any() ?? false) {
+                if (_workflowDefinitions?.Any() ?? false)
+                {
 
                     query = from psc in db.Set<PersistedScheduledCommand>().Where(x => x.ExecuteTime < asOf.UtcDateTime.Ticks)
                             join wf in db.Set<PersistedWorkflow>().Where(x => _workflowDefinitions.Contains(x.WorkflowDefinitionId))
                             on psc.Data equals wf.InstanceId.ToString()
                             select psc;
 
-                } else {
-                     query = db.Set<PersistedScheduledCommand>().Where(x => x.ExecuteTime < asOf.UtcDateTime.Ticks);
                 }
-                   var cursor = await query.ToArrayAsync();
-                   // .AsAsyncEnumerable();
-                           
+                else
+                {
+                    query = db.Set<PersistedScheduledCommand>().Where(x => x.ExecuteTime < asOf.UtcDateTime.Ticks);
+                }
+                var cursor = await query.ToArrayAsync();
+                // .AsAsyncEnumerable();
+
                 //await foreach (var command in cursor)
-                 foreach (var command in cursor)
-                 {
+                foreach (var command in cursor)
+                {
                     try
-                    {                        
+                    {
 
                         //поставить в очередь action: await _queueProvider.QueueWork(command.Data, QueueType.Workflow);
                         await action(command.ToScheduledCommand());
@@ -448,8 +481,8 @@ namespace WorkflowCore.Persistence.EntityFramework.Services
                         db2.Set<PersistedScheduledCommand>().Remove(command);
                         await db2.SaveChangesAsync();
 
-                        
-                        
+
+
                     }
                     catch (Exception)
                     {
@@ -459,11 +492,12 @@ namespace WorkflowCore.Persistence.EntityFramework.Services
             }
         }
 
-        public async Task<bool> MeetWorkflowDefinitions(WorkflowDbContext dbContext, PersistedScheduledCommand command) {
+        public async Task<bool> MeetWorkflowDefinitions(WorkflowDbContext dbContext, PersistedScheduledCommand command)
+        {
             if (command.CommandName != ScheduledCommand.ProcessWorkflow) throw new Exception("Неизвестный тип");
 
-           bool result =await dbContext.Set<PersistedWorkflow>()
-                .AnyAsync(x=>x.InstanceId.ToString() == command.Data && (_workflowDefinitions==default || _workflowDefinitions.Contains(x.WorkflowDefinitionId)) );
+            bool result = await dbContext.Set<PersistedWorkflow>()
+                 .AnyAsync(x => x.InstanceId.ToString() == command.Data && (_workflowDefinitions == default || _workflowDefinitions.Contains(x.WorkflowDefinitionId)));
 
             return result;
         }

@@ -23,5 +23,7 @@ namespace WorkflowCore.Interface
 
         Task<IEnumerable<WorkflowInstance>> GetWorkflowInstances(IEnumerable<string> ids, CancellationToken cancellationToken = default);
 
+        Task PersistDefinition(WorkflowDefinition definition, CancellationToken cancellationToken = default);
+
     }
 }
