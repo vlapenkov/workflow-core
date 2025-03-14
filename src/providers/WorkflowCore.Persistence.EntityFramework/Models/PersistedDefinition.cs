@@ -25,24 +25,13 @@ namespace WorkflowCore.Persistence.EntityFramework.Models
         [MaxLength(500)]
         public string Description { get; set; }
         
-        public List<StepData> StepsData { get; set; }
+        public DefinitionMeta MetaData { get; set; }
 
 
     }
 
     
-    /// <summary>
-    /// Данные шага
-    /// </summary>    
-
-    public class StepData
-    {
-        public int Id { get; set; }
-
-        public string? Name { get; set; }
-
-        public string? DimensionId { get; set; }
-    }
+    
 
 
 }

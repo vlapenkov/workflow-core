@@ -144,12 +144,15 @@ namespace WorkflowCore.Persistence.EntityFramework
             result.WorkflowDefinitionId = definition.Id;
             result.Version = definition.Version;
             result.Description = definition.Description;
-            result.StepsData =  definition.Steps.Select(p => new StepData
+            result.MetaData = new DefinitionMeta
             {
-                Id = p.Id,
-                Name = p.Name,
-                DimensionId = p.Analitics
-            }).ToList();
+                Steps = definition.Steps.Select(p => new StepData
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    DimensionId = p.Analitics
+                }).ToList()
+            };
            
 
             return result;

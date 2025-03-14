@@ -61,9 +61,14 @@ namespace WorkflowCore.Services
             var def = builder.Build(workflow.Id, workflow.Version, workflow.Description);
             RegisterWorkflow(def);
 
-            var repository = _serviceProvider.GetService<IWorkflowRepository>();
+            var options = _serviceProvider.GetService<WorkflowOptions>();
 
-            repository.PersistDefinition(def);
+            if (options.PersistDefinition)
+            {
+                var repository = _serviceProvider.GetService<IWorkflowRepository>();
+
+                repository.PersistDefinition(def);
+            }
         }
 
         public void RegisterWorkflow(WorkflowDefinition definition)
@@ -95,9 +100,14 @@ namespace WorkflowCore.Services
             var def = builder.Build(workflow.Id, workflow.Version);
             RegisterWorkflow(def);
 
-            var repository =_serviceProvider.GetService<IWorkflowRepository>();
+            var options = _serviceProvider.GetService<WorkflowOptions>();
 
-            repository.PersistDefinition(def);
+            if (options.PersistDefinition)
+            {
+                var repository = _serviceProvider.GetService<IWorkflowRepository>();
+
+                repository.PersistDefinition(def);
+            }
 
         }
 

@@ -40,6 +40,8 @@ namespace WorkflowCore.Models
         public bool EnablePolling { get; set; } = true;
         public bool EnableLifeCycleEventsPublisher { get; set; } = true;
 
+        public bool PersistDefinition { get; set; } = false;
+
         /// <summary>
         /// Ключ для подключения только определений такого типа
         /// </summary>

@@ -46,7 +46,7 @@ namespace WorkflowCore.Persistence.EntityFramework.Services
 
             var definitions = modelBuilder.Entity<PersistedDefinition>();
             definitions.HasKey(x => x.Id);
-            definitions.Property(x => x.StepsData).SetJson();
+            definitions.Property(x => x.MetaData).SetJson();
 
 
             ConfigureWorkflowStorage(workflows);

@@ -174,7 +174,7 @@ namespace WorkflowCore.Persistence.EntityFramework.Services
                     {
                         var persistableDefinition = definition.ToPersistable();
                         existingDefinition.Description = persistableDefinition.Description;
-                        existingDefinition.StepsData = definition.ToPersistable().StepsData;
+                        existingDefinition.MetaData = definition.ToPersistable().MetaData;
                     }
 
                     await db.SaveChangesAsync(cancellationToken);
